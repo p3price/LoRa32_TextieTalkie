@@ -3,8 +3,10 @@
 Project:      LoRa32_TextieTalkie 
 File:         main.cpp
 Date Created: 9/8/2023
-Author:       Paul Price (using RadioLib)
-Ver. who knows
+Author:       Paul Price 
+Libraries:	  RadioLib from Jan Gromeš
+			  Link: https://github.com/jgromes/RadioLib
+
 Description:
 LoRa transmission code based off the RadioLib PingPong example for SX1278.
 The idea is an offline communication channel for back and forth text messages.
@@ -12,10 +14,10 @@ The idea is an offline communication channel for back and forth text messages.
 The LoRa32's initialize with a back and forth message to confirm the devices
 are operating correctly and within range. The MCU serves a webpage running on 
 the second core of the ESP32, so it is then always accessable and ready to 
-recive user inputs and messages. The onboard OLED displays prompt the user 
-to the process, indicating when they have recived a message and should 
-reload their webage, when they can send a new message, and if that message
-was sent successfully. 
+recive user inputs and messages. The onboard OLED display prompts the user 
+to the communication process, indicating when they have recived a message 
+and should reload their webage, when they can send a new message, and if 
+that message was sent successfully. 
  
 */
 
@@ -37,7 +39,7 @@ was sent successfully.
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
 
 // Replace with custom LoRa32 credentials
-const char *ssid = "LoRa32-Access-Point-Two";
+const char *ssid = "LoRa32-Access-Point-Two";				//CHANGE FOR EACH DEVICE
 const char *password = "123456789";
 
 // Set web server port number to 80
@@ -47,7 +49,7 @@ WiFiClient client;
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RST);
 
 // uncomment the following only on one of the nodes to initiate the pings
-//#define INITIATING_NODE
+//#define INITIATING_NODE								    //CHANGE FOR EACH DEVICE
 
 // SX1278 has the following connections on TTGO LoRa32 Board:
 // NSS pin:   18
@@ -71,10 +73,8 @@ bool transmitFlag = false;
 // flag to indicate that a packet was sent or received
 volatile bool operationDone = false;
 
-// this function is called when a complete packet
-// is transmitted or received by the module
-// IMPORTANT: this function MUST be 'void' type
-//            and MUST NOT have any arguments!
+// this function is called when a complete packet is transmitted or received by the module
+// IMPORTANT: this function MUST be 'void' type and MUST NOT have any arguments!
 void setFlag(void)
 {
 	// we sent or received  packet, set the flag
@@ -137,7 +137,7 @@ void task1code(void *pvParameters)
 							client.println("<textarea rows=\"5\" cols=\"40\" type=\"text\">");
 							client.println(RxStr);
 							client.println("</textarea>");
-							client.println("<p><button type=\"submit\" onclick=\"reloadURL()\" id=\"demo1\" class=\"button\">Recieve and Refresh</button></p><br><br><br>");
+							client.println("<p><button type=\"submit\" onclick=\"reloadURL()\" id=\"demo1\" class=\"button\">Receive and Refresh</button></p><br><br><br>");
 							client.println("<script type=\"text/javascript\"> function reloadURL() {window.location.replace(':reload~');} </script>");
 							client.println("</body></html>");
 
@@ -162,6 +162,7 @@ void task1code(void *pvParameters)
 			int ind2 = header.indexOf('~');
 			String parsedTxData1 = header.substring(ind1 + 1, ind2);
 			parsedTxData1.replace("%20", " ");
+			parsedTxData1.replace("%E2%80%%99", "'");
 			parsedTxData = parsedTxData1;
 			parsedTxData1 = "";
 			Serial.println(parsedTxData);
