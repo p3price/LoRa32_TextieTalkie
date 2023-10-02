@@ -39,7 +39,7 @@ that message was sent successfully.
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
 
 // Replace with custom LoRa32 credentials
-const char *ssid = "LoRa32-Access-Point-Two";				//CHANGE FOR EACH DEVICE
+const char *ssid = "LoRa32-Access-Point-One";				//CHANGE FOR EACH DEVICE
 const char *password = "123456789";
 
 // Set web server port number to 80
@@ -49,7 +49,7 @@ WiFiClient client;
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RST);
 
 // uncomment the following only on one of the nodes to initiate the pings
-//#define INITIATING_NODE								    //CHANGE FOR EACH DEVICE
+#define INITIATING_NODE								    //CHANGE FOR EACH DEVICE
 
 // SX1278 has the following connections on TTGO LoRa32 Board:
 // NSS pin:   18
@@ -61,7 +61,7 @@ SX1278 radio = new Module(18, 26, 23, 19);
 String LoRaData = "Initializing...";
 String header;
 String parsedTxData = "Initialized... You may start the conversation!";
-String userData = "";
+String userData = "Initializing";
 String RxStr;
 
 // save transmission states between loops
@@ -132,7 +132,7 @@ void task1code(void *pvParameters)
 							client.println("<p><button type=\"submit\" onclick=\"updateURL(document.getElementById(\'TxString\'))\" id=\"demo\" class=\"button\">Submit and Send</button></p><br><br><br>");
 							client.println("<script type=\"text/javascript\"> function updateURL(chk) {window.location.replace(':' + chk.value + '~'); } </script>");
 							client.println("<br><br>");
-							client.println("<h3>Recieved Data</h3>");
+							client.println("<h3>Received Data</h3>");
 							client.println("<p>Please use the button below to load response when prompted!</p>");
 							client.println("<textarea rows=\"5\" cols=\"40\" type=\"text\">");
 							client.println(RxStr);
@@ -223,7 +223,7 @@ void setup()
 
 	// initialize SX1278 with default settings
 	Serial.print(F("[SX1278] Initializing ... "));
-	int state = radio.begin();
+	int state = radio.begin(434.0, 125.0, 12, 7, RADIOLIB_SX127X_SYNC_WORD, 17, 8, 0);
 	if (state == RADIOLIB_ERR_NONE)
 	{
 		Serial.println(F("success!"));
