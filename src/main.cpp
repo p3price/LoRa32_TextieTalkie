@@ -8,7 +8,7 @@ Libraries:	  RadioLib from Jan Gromeš
 			  Link: https://github.com/jgromes/RadioLib
 
 Description:
-LoRa transmission code based off the RadioLib PingPong example for SX1278.
+LoRa transmission code based off the RadioLib PingPong example for SX1276.
 The idea is an offline communication channel for back and forth text messages.
 
 The LoRa32's initialize with a back and forth message to confirm the devices
@@ -51,12 +51,12 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RST);
 // uncomment the following only on one of the nodes to initiate the pings
 #define INITIATING_NODE								    //CHANGE FOR EACH DEVICE
 
-// SX1278 has the following connections on TTGO LoRa32 Board:
+// SX1276 has the following connections on TTGO LoRa32 Board:
 // NSS pin:   18
 // DIO0 pin:  26
 // NRST pin:  23
 // DIO1 pin:  19
-SX1278 radio = new Module(18, 26, 23, 19);
+SX1276 radio = new Module(18, 26, 23, 19);
 
 String LoRaData = "Initializing...";
 String header;
@@ -221,14 +221,14 @@ void setup()
 	display.setTextSize(1);
 	display.setCursor(0, 0);
 
-	// initialize SX1278 with default settings
-	Serial.print(F("[SX1278] Initializing ... "));
-	int state = radio.begin(434.0, 125.0, 12, 7, RADIOLIB_SX127X_SYNC_WORD, 17, 8, 0);
+	// initialize SX1276 with default settings
+	Serial.print(F("[SX1276] Initializing ... "));
+	int state = radio.begin(915.0, 125.0, 12, 7, RADIOLIB_SX127X_SYNC_WORD, 17, 8, 0);
 	if (state == RADIOLIB_ERR_NONE)
 	{
 		Serial.println(F("success!"));
 		display.setCursor(0, 0);
-		display.print("SX1278 Initialized!");
+		display.print("SX1276 Initialized!");
 		display.display();
 		delay(2000);
 	}
@@ -236,7 +236,7 @@ void setup()
 	{
 		Serial.print(F("failed, code "));
 		Serial.println(state);
-		display.print("SX1278 Failed!");
+		display.print("SX1276 Failed!");
 		display.display();
 		delay(2000);
 		while (true)
@@ -248,7 +248,7 @@ void setup()
 
 	#if defined(INITIATING_NODE)
 		// send the first packet on this node
-		Serial.print(F("[SX1278] Sending first packet ... "));
+		Serial.print(F("[SX1276] Sending first packet ... "));
 		transmissionState = radio.startTransmit(LoRaData);
 		transmitFlag = true;
 
@@ -260,7 +260,7 @@ void setup()
 
 	#else
 		// start listening for LoRa packets on this node
-		Serial.print(F("[SX1278] Starting to listen ... "));
+		Serial.print(F("[SX1276] Starting to listen ... "));
 		display.clearDisplay();
 		display.setCursor(0, 0);
 		display.print("Starting to listen");
@@ -341,25 +341,25 @@ void loop()
 			if (state == RADIOLIB_ERR_NONE)
 			{
 				// packet was successfully received
-				Serial.println(F("[SX1278] Received packet!"));
+				Serial.println(F("[SX1276] Received packet!"));
 
 				// print data of the packet
-				Serial.print(F("[SX1278] Data:\t\t"));
+				Serial.print(F("[SX1276] Data:\t\t"));
 				Serial.println(str);
 
 				// print RSSI (Received Signal Strength Indicator)
-				Serial.print(F("[SX1278] RSSI:\t\t"));
+				Serial.print(F("[SX1276] RSSI:\t\t"));
 				Serial.print(radio.getRSSI());
 				Serial.println(F(" dBm"));
 
 				// print SNR (Signal-to-Noise Ratio)
-				Serial.print(F("[SX1278] SNR:\t\t"));
+				Serial.print(F("[SX1276] SNR:\t\t"));
 				Serial.print(radio.getSNR());
 				Serial.println(F(" dB"));
 			}
 
 			// send another one
-			Serial.print(F("[SX1278] Your turn to transmit ... "));
+			Serial.print(F("[SX1276] Your turn to transmit ... "));
 
 			while (userData == "") 
 			{
